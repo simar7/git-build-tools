@@ -1,4 +1,4 @@
-#!/usr/bin/env/ python
+#!/usr/bin/env python
 
 from distutils.core import setup
 from setuptools import find_packages
@@ -9,12 +9,10 @@ setup(
     author='Chris AtLee',
     author_email='catlee@mozilla.com',
     packages=find_packages(),
-    # XXX: Update URL when submitted.
-    url='',
-    license='LICENSE',
+    url='https://hg.mozilla.org/build/tools/file/default/hgtool',
+    license='MPL',
     description='hgtool allows to do safe operations with hg',
-    long_description=open('README.txt').read(),
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'hgtool = hgtool.hgtool:main',
             ],

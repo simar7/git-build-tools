@@ -1,20 +1,10 @@
-"""%prog [-p|--props-file] [-r|--rev revision] [-b|--branch branch]
-         [-s|--shared-dir shared_dir] [--check-outgoing] repo [dest]
-
-Tool to do safe operations with hg.
-
-revision/branch on commandline will override those in props-file"""
-
 # Import snippet to find tools lib
 import os
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../lib/python"))
-
+import argparse
+import logging
 from util.hg import mercurial, out, remove_path
 
 def main():
-    import argparse
-    import logging
 
     parser = argparse.ArgumentParser(description='Tool to do safe operations with hg.')
 
@@ -29,7 +19,7 @@ def main():
 
     parser.add_argument(
         "-b", "--branch", dest="branch", help="which branch to update to",
-        default=os.environ.get('HG_BRANCH', None))
+        default=os.environ.get('HG_BRANCH'))
 
     parser.add_argument(
         "-p", "--props-file", dest="propsfile",
@@ -81,20 +71,14 @@ def main():
 
     options = parser.parse_args()
 
-    if options.repo is None:
-        parser.error("No repo argument specified.")
-
     if options.dest is None:
-        options.dest = os.path.basename(options.repo)
+        options.dest = os.path.basename(options.repo.rstrip("/"))
 
     logging.basicConfig(level=options.loglevel, format="%(message)s")
 
     # Parse propsfile
     if options.propsfile:
-        try:
-            import json
-        except ImportError:
-            import simplejson as json
+        import json
         js = json.load(open(options.propsfile))
         if options.revision is None:
             options.revision = js['sourcestamp']['revision']
@@ -115,8 +99,7 @@ def main():
                              bundles=options.bundles,
                              autoPurge=options.auto_purge)
 
-    print "Got revision %s" % got_revision
-
+    logging.info("Got revision: %s" % got_revision)
 
 if __name__ == '__main__':
     main()
